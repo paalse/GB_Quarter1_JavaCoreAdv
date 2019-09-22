@@ -22,16 +22,14 @@ public class MainException {
     public static int checkArray(String[][] array, int arraySide) throws MySizeArrayException, MyArrayDataException {
         int result = 0;
 
-        // Проверка сторон массива
+        // Проверка количества строк массива
         if (array.length != arraySide)
             throw new MySizeArrayException("Количество строк массива не равно " + arraySide);
-        for (int i = 0; i < array.length; i++) {
-            if (array[i].length != arraySide)
-                throw new MySizeArrayException("В строке " + i + " массива, количество элементов не равно " + arraySide);
-        }
 
         //Конвертация строк массива в числа и их подсуммирование
         for (int i = 0; i < array.length; i++) {
+            if (array[i].length != arraySide) // Проверка количества элементов в строке массива
+                throw new MySizeArrayException("В строке " + i + " массива, количество элементов не равно " + arraySide);
             for (int j = 0; j < array[i].length; j++) {
                 try {
                     result += Integer.parseInt(array[i][j]);
@@ -43,14 +41,14 @@ public class MainException {
         return result;
     }
 
-
+    
     public static void main(String[] args) {
         int arraySide = 4; // Рзмер стороны массива
 
-         //String[][] mass = {{"1", "2", "3", "34"}, {"2", "3", "4", "6"}, {"2", "3", "0", "21"}, {"2", "3", "10", "633"}}; // Правлиный массив
+        String[][] mass = {{"1", "2", "3", "34"}, {"2", "3", "4", "6"}, {"2", "3", "0", "21"}, {"2", "3", "10", "633"}}; // Правлиный массив
         // String[][] mass = {{"1", "2", "3", "34"}, {"2", "3", "4", "6"}, {"2", "3", "0", "21"}, }; // Не хватает строк
         // String[][] mass = {{"1", "2", "3", "34"}, {"2"}, {"2", "3", "0", "21"}, {"2", "3", "10", "633"}}; // Не хватает элементов в одной из строк
-         String[][] mass = {{"1", "2", "3", "34"}, {"2", "3", "4", "ZZ"}, {"2", "3", "0", "21"}, {"2", "3", "10", "633"}}; // Массив содержит буквы
+        //String[][] mass = {{"1", "2", "3", "34"}, {"2", "3", "4", "ZZ"}, {"2", "3", "0", "21"}, {"2", "3", "10", "633"}}; // Массив содержит буквы
 
         try {
             System.out.println("Сумма элементов массива: " + checkArray(mass, arraySide));
