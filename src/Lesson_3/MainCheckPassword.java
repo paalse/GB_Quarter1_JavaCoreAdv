@@ -12,21 +12,15 @@ package Lesson_3;
 import java.util.Scanner;
 
 public class MainCheckPassword {
+
     public static boolean checkPassword(String password) {
-        boolean resDigit = false; // Результат проверки  по наличию цифр
-        boolean resLowCase = false; // Результат проверки наличия букв в нижнем регистре
-        boolean resHighCase = false; // Результат проверки наличия букв в верхнем регистре
+        String condition = "(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9]).{8,}";
 
-        // Проверка длины и наличия пробелов
-        if ((password.length() < 8) || password.contains(" ")) return false;
-
-        // Проверка регистра букв и наличия цифр
-        for (int i = 0; i < password.length(); i++) {
-            if (Character.isLowerCase(password.charAt(i)) && resLowCase == false) resLowCase = true;
-            if (Character.isUpperCase(password.charAt(i)) && resHighCase == false) resHighCase = true;
-            if (Character.isDigit(password.charAt(i)) && resDigit == false) resDigit = true;
+        if (password.matches(condition)) {
+            return true;
+        } else {
+            return false;
         }
-        return (resDigit && resLowCase && resHighCase);
     }
 
     public static void main(String[] args) {
