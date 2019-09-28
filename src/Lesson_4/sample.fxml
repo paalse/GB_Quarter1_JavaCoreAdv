@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import javax.print.DocFlavor.URL?>
+<AnchorPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="Lesson_4.Controller"
+            prefHeight="400.0" prefWidth="600.0">
+    <stylesheets><URL value="@Style.css" /></stylesheets>
+
+    <TextArea fx:id="textArea" editable="false" VBox.vgrow="ALWAYS" />
+    <HBox>
+        <TextField fx:id="textField" onAction="#sendMsg" promptText="Введите сообщение..." HBox.hgrow="ALWAYS" />
+        <Button fx:id="btn1" onAction="#sendMsg" text="Send" />
+    </HBox>
+
+
+</AnchorPane>
