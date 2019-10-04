@@ -17,6 +17,7 @@ public class ConsoleClient {
             DataOutputStream out = new DataOutputStream(socket.getOutputStream());
             Scanner consoleIn = new Scanner(System.in);
 
+            // Поток для получения данных по сети
             new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -25,14 +26,14 @@ public class ConsoleClient {
                             String str = in.readUTF();
                             System.out.println(str);
                         } catch (IOException e) {
-                            //e.printStackTrace();
-                            System.out.println("Сервер не доступен!");
+                            e.printStackTrace();
                             break;
                         }
                     }
                 }
             }).start();
 
+            // Поток для считывания данных с консоли и отправки их по сети
             new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -41,8 +42,7 @@ public class ConsoleClient {
                             String str = consoleIn.nextLine();
                             out.writeUTF(str);
                         } catch (IOException e) {
-                            //e.printStackTrace();
-                            System.out.println("Сервер не доступен!");
+                            e.printStackTrace();
                             break;
                         }
                     }

@@ -15,7 +15,7 @@ public class ConsoleServer {
         try {
             ServerSocket serverSocket = new ServerSocket(PORT);
             System.out.println("Сервер запущен!");
-            while(true) {
+            while (true) {
                 Socket socket = serverSocket.accept();
                 System.out.println("Клиент подключился!");
 
@@ -23,6 +23,7 @@ public class ConsoleServer {
                 DataOutputStream out = new DataOutputStream(socket.getOutputStream());
                 Scanner consoleIn = new Scanner(System.in);
 
+                // Поток для получения данных по сети
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
@@ -39,6 +40,7 @@ public class ConsoleServer {
                     }
                 }).start();
 
+                // Поток для считывания данных с консоли и отправки их по сети
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
