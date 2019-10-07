@@ -62,6 +62,12 @@ public class ConsoleServer {
                 });
                 consoleThread.setDaemon(true);
                 consoleThread.start();
+
+                try {
+                    socketThread.join();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
