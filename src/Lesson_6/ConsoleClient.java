@@ -11,14 +11,15 @@ public class ConsoleClient {
     static final int PORT = 8186;
 
     public static void main(String[] args) throws IOException {
+        Socket socket = null;
         try {
-            Socket socket = new Socket(ADDRESS, PORT);
+            socket = new Socket(ADDRESS, PORT);
             DataInputStream in = new DataInputStream(socket.getInputStream());
             DataOutputStream out = new DataOutputStream(socket.getOutputStream());
             Scanner consoleIn = new Scanner(System.in);
 
             // Поток для получения данных по сети
-            new Thread(new Runnable() {
+            Thread socketThread = new  Thread(new Runnable() {
                 @Override
                 public void run() {
                     while (true) {
@@ -31,10 +32,11 @@ public class ConsoleClient {
                         }
                     }
                 }
-            }).start();
+            });
+            socketThread.start();
 
             // Поток для считывания данных с консоли и отправки их по сети
-            new Thread(new Runnable() {
+            Thread consoleThread = new Thread(new Runnable() {
                 @Override
                 public void run() {
                     while (true) {
@@ -47,10 +49,23 @@ public class ConsoleClient {
                         }
                     }
                 }
-            }).start();
+            });
+            consoleThread.setDaemon(true);
+            consoleThread.start();
 
+            try {
+                socketThread.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            try {
+                socket.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 }

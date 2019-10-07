@@ -12,11 +12,14 @@ public class ConsoleServer {
     static final int PORT = 8186;
 
     public static void main(String[] args) {
+        ServerSocket serverSocket = null;
+        Socket socket = null;
+
         try {
-            ServerSocket serverSocket = new ServerSocket(PORT);
+            serverSocket = new ServerSocket(PORT);
             System.out.println("Сервер запущен!");
             while (true) {
-                Socket socket = serverSocket.accept();
+                socket = serverSocket.accept();
                 System.out.println("Клиент подключился!");
 
                 DataInputStream in = new DataInputStream(socket.getInputStream());
@@ -24,7 +27,7 @@ public class ConsoleServer {
                 Scanner consoleIn = new Scanner(System.in);
 
                 // Поток для получения данных по сети
-                new Thread(new Runnable() {
+                Thread socketThread = new Thread(new Runnable() {
                     @Override
                     public void run() {
                         while (true) {
@@ -38,10 +41,11 @@ public class ConsoleServer {
                             }
                         }
                     }
-                }).start();
+                });
+                socketThread.start();
 
                 // Поток для считывания данных с консоли и отправки их по сети
-                new Thread(new Runnable() {
+                Thread consoleThread = new Thread(new Runnable() {
                     @Override
                     public void run() {
                         while (true) {
@@ -55,10 +59,23 @@ public class ConsoleServer {
                             }
                         }
                     }
-                }).start();
+                });
+                consoleThread.setDaemon(true);
+                consoleThread.start();
             }
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            try {
+                socket.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            try {
+                serverSocket.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 }
