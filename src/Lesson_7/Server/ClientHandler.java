@@ -47,17 +47,19 @@ public class ClientHandler {
 
                         while (true) {
                             String str = in.readUTF();
-                            if (str.equalsIgnoreCase("/end")) {
-                                sendMsg("/clientClose");
-                                break;
-                            }
-                            if (str.startsWith("/w")) {
-                                String[] splitStr = str.split(" ");
-                                String recipient = splitStr[1];
-                                if(serv.checkUserOnChat(recipient)) {
-                                    serv.sendMsgToUser(recipient, nick + ": " + str.replace(splitStr[0] + " " + splitStr[1] + " ", "" ));
-                                } else {
-                                    sendMsg("Пользователь " + recipient + " не подключен к чату");
+                            if (str.startsWith("/")) {  // Блок обработки служебных сообщений
+                                if (str.equalsIgnoreCase("/end")) {
+                                    sendMsg("/clientClose");
+                                    break;
+                                }
+                                if (str.startsWith("/w")) {
+                                    String[] splitStr = str.split(" ", 3);
+                                    String recipient = splitStr[1];
+                                    if (serv.checkUserOnChat(recipient)) {
+                                        serv.sendMsgToUser(recipient, nick + ": " + splitStr[2]);
+                                    } else {
+                                        sendMsg("Пользователь " + recipient + " не подключен к чату");
+                                    }
                                 }
                             } else {
                                 serv.broadcastMsg(nick + ": " + str);
