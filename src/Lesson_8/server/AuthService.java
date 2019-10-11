@@ -1,6 +1,8 @@
-package ru.geekbrains.chat.server;
+package Lesson_8.server;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class AuthService {
     private static Connection connection;
@@ -49,6 +51,82 @@ public class AuthService {
     public static void disconnect() {
         try {
             connection.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Получение черного списка пользователя
+     *
+     * @param nick - имя пользователя
+     * @return
+     */
+    public static List<String> getBlackList(String nick) {
+        List<String> result = new ArrayList<String>();
+        try {
+            ResultSet rs = stmt.executeQuery("select a.nickname from main a where a.id in  (select b.id_block_user from main m \n" +
+                    "join blacklist b on b.id_user = m.id\n" +
+                    "where m.nickname = '" + nick + "')");
+            while (rs.next()) {
+                result.add(rs.getString(1));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    /**
+     * Получение ID пользователя по имени
+     *
+     * @param nick - имя пользователя
+     * @return
+     */
+    public static int getUserId(String nick) {
+        int result = -1;
+        try {
+            ResultSet rs = stmt.executeQuery("SELECT id FROM main WHERE nickname = '" + nick + "'");
+            if (rs.next()) {
+                result = Integer.parseInt(rs.getString(1));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    /**
+     * Добавление в черный список
+     *
+     * @param nick
+     */
+    public static void addToBlackList(String nick, String block_nick) {
+        int userId = getUserId(nick);
+        int userIdBlock = getUserId(block_nick);
+        try {
+            String query = "INSERT INTO blacklist (id_user, id_block_user) VALUES (?, ?);";
+            PreparedStatement ps = connection.prepareStatement(query);
+            ps.setInt(1, userId);
+            ps.setInt(2, userIdBlock);
+            ps.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Очистить весь черный список
+     *
+     * @param nick - имя пользователя черный список которого очищается
+     */
+    public static void clearBlackList(String nick) {
+        int userId = getUserId(nick);
+        try {
+            String query = "delete from blacklist where id_user = " + userId + ";";
+            PreparedStatement ps = connection.prepareStatement(query);
+            //ps.setInt(1, userId);
+            ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }

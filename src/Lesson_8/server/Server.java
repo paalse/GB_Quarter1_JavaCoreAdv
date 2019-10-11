@@ -1,4 +1,4 @@
-package ru.geekbrains.chat.server;
+package Lesson_8.server;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -38,6 +38,12 @@ public class Server {
         }
     }
 
+    /**
+     * Персональное сообщение конкретному пользователю
+     * @param from
+     * @param nickTo
+     * @param msg
+     */
     public void sendPersonalMsg(ClientHandler from, String nickTo, String msg) {
         for (ClientHandler o : clients) {
             if (o.getNick().equals(nickTo)) {
@@ -49,6 +55,11 @@ public class Server {
         from.sendMsg("Клиент с ником " + nickTo + " не найден в чате");
     }
 
+    /**
+     * Сообщение всем пользователям с учетом черного списка
+     * @param from
+     * @param msg
+     */
     public void broadcastMsg(ClientHandler from, String msg) {
         for (ClientHandler o : clients) {
             if (!o.checkBlackList(from.getNick())) {
@@ -57,6 +68,11 @@ public class Server {
         }
     }
 
+    /**
+     * Проверка подключен ли пользователь с таким именем или нет
+     * @param nick
+     * @return
+     */
     public boolean isNickBusy(String nick) {
         for (ClientHandler o : clients) {
             if (o.getNick().equals(nick)) {
@@ -78,11 +94,19 @@ public class Server {
         }
     }
 
+    /**
+     * Подключение пользователя к чату
+     * @param client
+     */
     public void subscribe(ClientHandler client) {
         clients.add(client);
         broadcastClientsList();
     }
 
+    /**
+     * Отключение пользователя от чата
+     * @param client
+     */
     public void unsubscribe(ClientHandler client) {
         clients.remove(client);
         broadcastClientsList();

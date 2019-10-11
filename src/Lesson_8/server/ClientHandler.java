@@ -1,4 +1,4 @@
-package ru.geekbrains.chat.server;
+package Lesson_8.server;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -33,12 +33,13 @@ public class ClientHandler {
                         String str = in.readUTF();
                         if (str.startsWith("/auth")) { // /auth login72 pass72
                             String[] tokens = str.split(" ");
-                            String newNick = AuthService.getNickByLoginAndPass(tokens[1], tokens[2]);
+                            String newNick = AuthService.getNickByLoginAndPass(tokens[1], tokens[2]); // Получение имени пользователя из базы
                             if (newNick != null) {
                                 if (!server.isNickBusy(newNick)) {
                                     sendMsg("/authok");
                                     nick = newNick;
                                     server.subscribe(this);
+                                    blackList = AuthService.getBlackList(this.nick);// Загрузка черного списка из базы
                                     break;
                                 } else {
                                     sendMsg("Учетная запись уже используется");
@@ -55,14 +56,30 @@ public class ClientHandler {
                                 out.writeUTF("/serverclosed");
                                 break;
                             }
+                            // Персональное сообщение пользователю
                             if (str.startsWith("/w ")) {
                                 String[] tokens = str.split(" ", 3);
                                 server.sendPersonalMsg(this, tokens[1], tokens[2]);
                             }
-                            if (str.startsWith("/blacklist ")) { // /blacklist nick3
+                            // Добавление пользователя в черный список
+                            if (str.startsWith("/blacklist")) {
                                 String[] tokens = str.split(" ");
-                                blackList.add(tokens[1]);
+                                AuthService.addToBlackList(this.nick, tokens[1]);
                                 sendMsg("Вы добавили пользователя " + tokens[1] + " в черный список");
+                                blackList = AuthService.getBlackList(this.nick);// Загрузка черного списка из базы
+                            }
+                            // Очистка черного списка
+                            if (str.startsWith("/clearblacklist")) {
+                                AuthService.clearBlackList(this.nick);
+                                sendMsg("Черный список очищен");
+                                blackList = AuthService.getBlackList(this.nick);
+                            }
+                            // Получение черного списка
+                            if (str.startsWith("/getblacklist")) {
+                                sendMsg("Черный список:");
+                                for (String bl: blackList) {
+                                    sendMsg(bl);
+                                }
                             }
                         } else {
                             server.broadcastMsg(this, nick + ": " + str);

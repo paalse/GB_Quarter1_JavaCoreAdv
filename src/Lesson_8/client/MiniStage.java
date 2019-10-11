@@ -1,10 +1,11 @@
-package ru.geekbrains.chat.client;
+package Lesson_8.client;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.TextArea;
 import javafx.stage.Stage;
+
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.List;
